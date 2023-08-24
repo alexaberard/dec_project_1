@@ -20,9 +20,7 @@ We're attempting to answer the following questions:
 
 
 ## Source datasets 
-What datasets are you sourcing from? How frequently are the source datasets updating?
-
-Example: 
+[What datasets are you sourcing from? How frequently are the source datasets updating?](https://openskynetwork.github.io/opensky-api/index.html)
 
 | Source name | Source type | Source documentation |
 | - | - | - |
