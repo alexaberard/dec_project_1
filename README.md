@@ -55,4 +55,13 @@ Here is a sample solution architecture diagram:
 ## Breakdown of tasks 
 Task breakdown stored here: https://trello.com/b/3xiyNull/project-1
 
+- Step 1 (In parallel):
+  - Person A and B pair program on the Extract and Load pipeline
+  - Person C and D pair program on the Transform pipeline
+- Step 2 (In parallel):
+  - Person A and C pair program on stitching the ELT pipeline together, adding logging and creating the Dockerfile for the docker image
+  - Person B and D pair program on creating the required AWS services (e.g. RDS, ECR, S3, ECS)
+- Step 3 (In parallel):
+  - Person A and B pair program on writing unit tests, documentation, and preparing slides for the presentation
+  - Person C and D pair program on deploying the solution to AWS
 ## end 
