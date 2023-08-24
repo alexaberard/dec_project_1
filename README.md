@@ -32,8 +32,8 @@ Example:
 ## Solution architecture
 How are we going to get data flowing from source to serving? What components and services will we combine to implement the solution? How do we automate the entire running of the solution? 
 
-- What data extraction patterns are you going to be using? Full extract (function to pull from past 2 years, 30 days at a time) initially, then incremental extract 
-- What data loading patterns are you going to be using? --> upsert 
+- We'll be using a full extract (function to pull from past 2 years, 30 days at a time) initially, then incremental extract 
+- We'll be doing upserts as our main 
 - What data transformation patterns are you going to be performing?
 - Aggregation function e.g. `avg`, `sum`, `max`, `min`, `count`, `rank`
 - Grouping i.e. `group by`
