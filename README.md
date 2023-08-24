@@ -41,7 +41,7 @@ How are we going to get data flowing from source to serving? What components and
 - Calculation e.g. `column_A + column_B`
 - Data type casting
 - Filtering e.g. `where`, `having`
-- Sorting
+- Sorting.
 - Joins/merges
 - Unions
 - Renaming e.g. `df.rename(columns={"old":"new:})` or `columnA as column_A`
