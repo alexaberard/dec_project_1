@@ -44,8 +44,6 @@ How are we going to get data flowing from source to serving? What components and
 - Unions
 - Renaming e.g. `df.rename(columns={"old":"new:})` or `columnA as column_A`
 
-We recommend using a diagramming tool like [draw.io](https://draw.io/) to create your architecture diagram. 
-
 Here is a sample solution architecture diagram: 
 
 ![images/sample-solution-architecture-diagram.png](images/sample-solution-architecture-diagram.png)
