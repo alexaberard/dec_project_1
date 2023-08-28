@@ -1,6 +1,8 @@
 import requests
 import datetime
 import pandas as pd
+from dotenv import load_dotenv
+import os
 
 def convert_to_unix_timestamp(timestamp):
     return int(timestamp.timestamp())
@@ -31,12 +33,12 @@ def get_arrivals_by_airport(airport,begin_timestamp, end_timestamp, username, pa
     
 
 def main():
+    load_dotenv()
+    username = os.environ.get("username")
+    password = os.environ.get("password")
     airport = "ESSA"
     begin_timestamp = datetime.datetime(2023,8,20,22,0)
     end_timestamp = datetime.datetime(2023,8,20,23,59)
-
-    username = "currambero"
-    password = "Tico123123"
 
     arrivals = get_arrivals_by_airport(airport,begin_timestamp,end_timestamp, username, password)
 
