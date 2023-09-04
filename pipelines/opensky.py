@@ -63,7 +63,8 @@ def main():
     #extract the data
     df_arrivals = extract_by_direction(opensky_client = opensky_client, direction = arrival, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
     if df_arrivals is None:
-        print("The variable is None")
+        print(f"The dataframe is None for direction: {arrival}")
+        print(f"Begin time is: {begin_timestamp} and end time is: {end_timestamp}")
     elif isinstance(df_arrivals, pd.DataFrame):
         print("Printing dataframes first 10 rows")
         
@@ -71,7 +72,10 @@ def main():
         print(df_arrivals.shape[0])
     else:
         print("Variables is of unknown type")
-    load(df=df_arrivals,postgresql_client=postgresql_client, table=table, metadata=metadata)
+    try:
+        load(df=df_arrivals,postgresql_client=postgresql_client, table=table, metadata=metadata)
+    except:
+        print("Nothing to load. Exiting.")
 
    #df_departures = extract_departures(opensky_client = opensky_client, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
    ##print(df_departures.head(10))

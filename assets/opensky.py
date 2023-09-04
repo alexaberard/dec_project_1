@@ -34,31 +34,39 @@ def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airpo
     
     # Extract data for the current interval (current_date to interval_end_date)
     
-    flight_data = opensky_client.get_direction_by_airport(direction,airport,current_date,interval_end_date)
+    #flight_data = opensky_client.get_direction_by_airport(direction,airport,current_date,interval_end_date)
+
+    try:
+       # Extract data for the current interval (current_date to interval_end_date)
+       flight_data = opensky_client.get_direction_by_airport(direction,airport,current_date,interval_end_date)
+       
+       # Create dataframe - content is the received json
+       df_flight_data = pd.json_normalize(flight_data)
+       
+       #add columns to dataframe.
+       df_flight_data.insert(1,'flightDataType',flightdata_type)
+       df_flight_data['extractDateTime'] = current_datetime
+
+      #transform unix time to normal timestamp
+       df_flight_data['firstSeen'] = pd.to_datetime(df_flight_data['firstSeen'], unit='s', errors='coerce')  # Assuming seconds
+       df_flight_data['lastSeen'] = pd.to_datetime(df_flight_data['lastSeen'], unit='s', errors='coerce')  # Assuming seconds
+
+      #replace NaT-values with None. NaT values are created by the function pd.to_datetime 'errors='coerce''
+      #to handle values that are not correct
+       df_flight_data = df_flight_data.replace({pd.NaT: None})
+      
+      #hash all columns and store the hash in a new column called hashed - this is they key in the database table
+       df_flight_data['hashed'] = pd.util.hash_pandas_object(df_flight_data, index=False).astype(str)
+
+      # add received data to accumulated dataframe.
+       accumulated_data = pd.concat([accumulated_data,df_flight_data])
+    except:
+       print("Could not extract data")
+       return None
   
-    # create dataframe of the json received
-    if is_json_compatible(flight_data) and not None:
-      df_flight_data = pd.json_normalize(flight_data)
-    else:
-      return None
-
-    #add columns to dataframe.
-    df_flight_data.insert(1,'flightDataType',flightdata_type)
-    df_flight_data['extractDateTime'] = current_datetime
-
-    #transform unix time to normal timestamp
-    df_flight_data['firstSeen'] = pd.to_datetime(df_flight_data['firstSeen'], unit='s', errors='coerce')  # Assuming seconds
-    df_flight_data['lastSeen'] = pd.to_datetime(df_flight_data['lastSeen'], unit='s', errors='coerce')  # Assuming seconds
-
-    # add received data to accumulated dataframe.
-    accumulated_data = pd.concat([accumulated_data,df_flight_data])
-
     # Move the current_date to the next interval
     current_date = interval_end_date + timedelta(days=1)  # Move 1 day ahead for the next interval
-
-  accumulated_data = accumulated_data.replace({pd.NaT: None})
-  accumulated_data['hashed'] = pd.util.hash_pandas_object(accumulated_data, index=False).astype(str)
-
+  #end while loop  
   return accumulated_data
 
 def load(df: pd.DataFrame, postgresql_client: PostgreSqlClient, table, metadata):
