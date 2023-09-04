@@ -54,3 +54,18 @@ class PostgreSqlClient:
         This method should only be used if you expect a resultset to be returned. 
         """
         return [dict(row) for row in self.engine.execute(sql).all()]
+    
+    def upsert_in_chunks(self, data: list[dict], table: Table, metadata: MetaData, chunksize: int = 1000) -> None: 
+        """
+        Upserts data into a database table in chunks (e.g. 1000 rows at a time) in case of query timeouts or row limitations. 
+        This method creates the table also if it doesn't exist. 
+        """
+        max_length = len(data)
+        for i in range(0, max_length, chunksize):
+            if i + chunksize >= max_length: 
+                lower_bound = i
+                upper_bound = max_length 
+            else: 
+                lower_bound = i 
+                upper_bound = i + chunksize
+            self.write_to_table(data = data[lower_bound:upper_bound], table = table, metadata = metadata)
