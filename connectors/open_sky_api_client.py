@@ -38,7 +38,7 @@ class OpenSkyAPIClient:
         }
 
         auth = (self.username, self.password)
-
+        
         response = requests.get(endpoint_url,params=params, auth=auth)
 
         if response.status_code == 200 and response.text:
