@@ -2,7 +2,7 @@ import os
 from connectors.open_sky_api_client import OpenSkyAPIClient
 from connectors.postgresql import PostgreSqlClient
 from assets.opensky import  load, extract_max_date, extract_by_direction
-from assets.transform import transform
+from assets.transform import transform, load_source_table_to_dwh
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pandas as pd
@@ -84,8 +84,18 @@ def main():
     #         print(f"No data to load for direction: {departure}")
         
     # end load to database
-        
-    # start of transform
+    
+    # start load to dwh
+    source_connection_url = URL.create(
+        drivername = "postgresql+pg8000", 
+        username = DB_USERNAME,
+        password = DB_PASSWORD,
+        host = SERVER_NAME, 
+        # port = SERVER_PORT,
+        database = DATABASE_NAME, 
+    )
+    
+    source_engine = create_engine(source_connection_url)    
     
     dwh_connection_url = URL.create(
         drivername = "postgresql+pg8000", 
@@ -97,20 +107,48 @@ def main():
     )
     dwh_engine = create_engine(dwh_connection_url)
     
+    
+    source_file_system_loader = FileSystemLoader("sql/load")
+    source_environment = Environment(loader=source_file_system_loader)
+    
+    for sql_load_file in source_environment.list_templates():
+        load_source_table_to_dwh(
+            sql_load_file=sql_load_file,
+            source_environment=source_environment,
+            source_engine=source_engine,
+            dwh_engine=dwh_engine
+        )    
+        
+    
+        #     data = extract(
+        #     sql_template=sql_template,
+        #     source_engine=source_engine,
+        #     target_engine=target_engine
+        # )
+        # source_metadata = get_schema_metadata(engine=source_engine)
+        # load(data=data, table_name=table_name, engine=target_engine, source_metadata=source_metadata)
+    
+    
+    
+    # end load to dwh
+    
+    # start of transform
+    
+
+    
     transform_file_system_loader = FileSystemLoader("sql/transform")
     transform_environment = Environment(loader=transform_file_system_loader)
     
     for sql_transform_file in transform_environment.list_templates():
-        print(sql_transform_file)
-        # sql_transform_template = transform_environment.get_template(sql_transform_file)
-        # # staging_table_name = sql_transform_template.make_module().config.get("table_name")
+        sql_transform_template = transform_environment.get_template(sql_transform_file)
         # staging_table_name = sql_transform_template.make_module().config.get("table_name")
-        # transform(
-        #     engine=dwh_engine,
-        #     sql_template=sql_transform_template,
-        #     table_name=staging_table_name,
-        # )  
-    
+        staging_table_name = os.path.splitext(sql_transform_file)[0]
+        transform(
+            engine=dwh_engine,
+            sql_template=sql_transform_template,
+            table_name=staging_table_name,
+        )  
+        print(f"Table {staging_table_name} loaded to datawarehouse")
     # end of transform
         
 
