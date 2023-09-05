@@ -14,7 +14,7 @@ def is_json_compatible(data):
         return False
 
 def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airport:str, begin_timestamp: datetime, end_timestamp: datetime):
-  
+  print(f"Extracting flightdata for direction: {direction}")
   # create variables with data that is going to be inserted into the df
   flightdata_type = direction
   current_datetime = pd.Timestamp.now(pytz.utc).replace(microsecond = 0)

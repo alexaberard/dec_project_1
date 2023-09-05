@@ -56,31 +56,23 @@ def main():
     departure = "departure"
 
     begin_timestamp = extract_max_date(postgresql_client = postgresql_client, table = table, default_begin_timestamp = default_begin_timestamp)
-   
-   #testing 
-    #begin_timestamp = datetime.datetime(2023,8,1,0,0)
     
     #extract the data
+    print(f"Begin time is: {begin_timestamp} and end time is: {end_timestamp}")
     df_arrivals = extract_by_direction(opensky_client = opensky_client, direction = arrival, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
-    if df_arrivals is None:
-        print(f"The dataframe is None for direction: {arrival}")
-        print(f"Begin time is: {begin_timestamp} and end time is: {end_timestamp}")
-    elif isinstance(df_arrivals, pd.DataFrame):
-        print("Printing dataframes first 10 rows")
-        print(df_arrivals.head(10).sort_values(by='firstSeen', ascending=True))
-        print(df_arrivals.shape[0])
-        #load should be in here.
-    else:
-        print("Variables is of unknown type")
-    try:
+    df_departures = extract_by_direction(opensky_client = opensky_client, direction = departure, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
+    
+    if isinstance(df_arrivals, pd.DataFrame):
+        print(f"Loading {arrival} data to database")
         load(df=df_arrivals,postgresql_client=postgresql_client, table=table, metadata=metadata)
-    except:
-        print("Nothing to load. Exiting.")
+    else:
+        print(f"No data to extract for direction: {arrival}")
 
-   #df_departures = extract_departures(opensky_client = opensky_client, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
-   ##print(df_departures.head(10))
-   #load(df=df_departures,postgresql_client=postgresql_client, table=table, metadata=metadata)
-
+    if isinstance(df_departures, pd.DataFrame):
+        print(f"Loading {departure} data to database")
+        load(df=df_departures,postgresql_client=postgresql_client, table=table, metadata=metadata)
+    else:
+        print(f"No data to extract for direction: {departure}")
 
 if __name__ == "__main__":
     main()
