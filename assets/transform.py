@@ -16,22 +16,31 @@ def load_source_table_to_dwh(
             source_environment: Environment,
             source_engine: Engine,
             dwh_engine: Engine,
+            chunksize: int = 1000
         ):
     table_name = os.path.splitext(sql_load_file)[0]
     sql_load_template  = source_environment.get_template(sql_load_file)
     data = [dict(row) for row in source_engine.execute(f"{sql_load_template.render()}").all()]
     
-    print(data[0])
-    print(sql_load_template.render())
-    
     source_metadata = MetaData(bind=source_engine)
     source_metadata.reflect()    
     
+    dwh_engine.execute(f"drop table if exists {table_name};")
     target_metadata = _create_table(table_name=table_name, metadata=source_metadata, engine=dwh_engine)
     table = target_metadata.tables[table_name]
-    insert_statement = postgresql.insert(table).values(data[0])
-    dwh_engine.execute(insert_statement)
-    
+    max_len = len(data)
+       
+    for i in range(0, max_len, chunksize):
+        if i + chunksize >= max_len:
+            lower_bound = i
+            upper_bound = max_len
+        else:
+            lower_bound = i
+            upper_bound = i + chunksize
+        insert_statement = postgresql.insert(table).values(data[lower_bound:upper_bound])
+        dwh_engine.execute(insert_statement)
+        
+    print(f"Table {table_name} loaded to datawarehouse")
     
 def _create_table(table_name: str, metadata: MetaData, engine: Engine):
     existing_table = metadata.tables[table_name]
