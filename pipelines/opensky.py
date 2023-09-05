@@ -10,8 +10,8 @@ import pytz
 
 def main():
     load_dotenv()
-    username = os.environ.get("username")
-    password = os.environ.get("password")
+    username = os.environ.get("USERNAME_API_OPENSKY")
+    password = os.environ.get("PASSWORD_API_OPENSKY")
     SERVER_NAME = os.environ.get("SERVER_NAME")
     DATABASE_NAME = os.environ.get("DATABASE_NAME")
     DB_USERNAME = os.environ.get("DB_USERNAME")
@@ -49,7 +49,7 @@ def main():
         Column("hashed", String, primary_key=True)
     )
     
-    airport = "ESSA" # ICAO: Arlanda Stockholm -- IATA names are not used.
+    airport = "EPWA" #"ESSA" # ICAO: Arlanda Stockholm -- IATA names are not used.
     default_begin_timestamp = datetime.datetime(2023,8,1,0,0, tzinfo=pytz.utc)
     end_timestamp = datetime.datetime.now(pytz.utc).replace(microsecond = 0)
     arrival = "arrival"
@@ -67,9 +67,9 @@ def main():
         print(f"Begin time is: {begin_timestamp} and end time is: {end_timestamp}")
     elif isinstance(df_arrivals, pd.DataFrame):
         print("Printing dataframes first 10 rows")
-        
         print(df_arrivals.head(10).sort_values(by='firstSeen', ascending=True))
         print(df_arrivals.shape[0])
+        #load should be in here.
     else:
         print("Variables is of unknown type")
     try:
