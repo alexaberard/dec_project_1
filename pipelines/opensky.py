@@ -1,7 +1,7 @@
 import os
-from dec_project_1.connectors.open_sky_api_client import OpenSkyAPIClient
-from dec_project_1.connectors.postgresql import PostgreSqlClient
-from dec_project_1.assets.opensky import  load, extract_max_date, extract_by_direction
+from connectors.open_sky_api_client import OpenSkyAPIClient
+from connectors.postgresql import PostgreSqlClient
+from assets.opensky import  load, extract_max_date, extract_by_direction
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pandas as pd
@@ -71,13 +71,13 @@ def main():
             print(f"Loading {arrival} data to database")
             load(df=df_arrivals,postgresql_client=postgresql_client, table=table, metadata=metadata)
         else:
-            print(f"No data to extract for direction: {arrival}")
+            print(f"No data to load for direction: {arrival}")
 
         if isinstance(df_departures, pd.DataFrame):
             print(f"Loading {departure} data to database")
             load(df=df_departures,postgresql_client=postgresql_client, table=table, metadata=metadata)
         else:
-            print(f"No data to extract for direction: {departure}")
+            print(f"No data to load for direction: {departure}")
         
         # end load to database
 
