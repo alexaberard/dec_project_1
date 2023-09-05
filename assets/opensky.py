@@ -1,5 +1,5 @@
-from dec_project_1.connectors.open_sky_api_client import OpenSkyAPIClient
-from dec_project_1.connectors.postgresql import PostgreSqlClient
+from connectors.open_sky_api_client import OpenSkyAPIClient
+from connectors.postgresql import PostgreSqlClient
 import pandas as pd
 from sqlalchemy import Table, MetaData, text, create_engine
 from datetime import datetime, timedelta
