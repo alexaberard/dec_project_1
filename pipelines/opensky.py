@@ -10,8 +10,8 @@ import pytz
 
 def main():
     load_dotenv()
-    username = os.environ.get("username")
-    password = os.environ.get("password")
+    username = os.environ.get("USERNAME_API_OPENSKY")
+    password = os.environ.get("PASSWORD_API_OPENSKY")
     SERVER_NAME = os.environ.get("SERVER_NAME")
     DATABASE_NAME = os.environ.get("DATABASE_NAME")
     DB_USERNAME = os.environ.get("DB_USERNAME")
@@ -50,7 +50,7 @@ def main():
     )
     
     airport = "ESSA" # ICAO: Arlanda Stockholm -- IATA names are not used.
-    default_begin_timestamp = datetime.datetime(2023,9,1,0,0, tzinfo=pytz.utc)
+    default_begin_timestamp = datetime.datetime(2023,9,4,0,0, tzinfo=pytz.utc)
     end_timestamp = datetime.datetime.now(pytz.utc).replace(microsecond = 0)
     arrival = "arrival"
     departure = "departure"
@@ -58,7 +58,7 @@ def main():
     begin_timestamp = extract_max_date(postgresql_client = postgresql_client, table = table, default_begin_timestamp = default_begin_timestamp)
    
    #testing 
-    #begin_timestamp = datetime.datetime(2023,8,1,0,0)
+    # begin_timestamp = datetime.datetime(2023,9,4,0,0, tzinfo=pytz.utc) #TODO: uncommented
     
     #extract the data
     df_arrivals = extract_by_direction(opensky_client = opensky_client, direction = arrival, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
@@ -80,7 +80,6 @@ def main():
    #df_departures = extract_departures(opensky_client = opensky_client, airport = airport, begin_timestamp = begin_timestamp, end_timestamp = end_timestamp)
    ##print(df_departures.head(10))
    #load(df=df_departures,postgresql_client=postgresql_client, table=table, metadata=metadata)
-
 
 if __name__ == "__main__":
     main()

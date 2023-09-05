@@ -1,3 +1,3 @@
 # env files
 .ENV
-.pyc
+*.pyc
