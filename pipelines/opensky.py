@@ -14,6 +14,7 @@ def main():
     password = os.environ.get("PASSWORD_API_OPENSKY")
     SERVER_NAME = os.environ.get("SERVER_NAME")
     DATABASE_NAME = os.environ.get("DATABASE_NAME")
+    DATABASE_DWH_NAME = os.environ.get("DATABASE_DWH_NAME")
     DB_USERNAME = os.environ.get("DB_USERNAME")
     DB_PASSWORD = os.environ.get("DB_PASSWORD")
     
