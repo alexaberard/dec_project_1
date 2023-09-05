@@ -14,7 +14,7 @@ def is_json_compatible(data):
         return False
 
 def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airport:str, begin_timestamp: datetime, end_timestamp: datetime):
-  
+  print(f"Extracting flightdata for direction: {direction}")
   # create variables with data that is going to be inserted into the df
   flightdata_type = direction
   current_datetime = pd.Timestamp.now(pytz.utc).replace(microsecond = 0)
@@ -43,10 +43,9 @@ def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airpo
        # Create dataframe - content is the received json
        df_flight_data = pd.json_normalize(flight_data)
        
-       #add columns to dataframe.
+       #add column to dataframe with direction info.
        df_flight_data.insert(1,'flightDataType',flightdata_type)
-       df_flight_data['extractDateTime'] = current_datetime
-
+       
       #transform unix time to normal timestamp
        df_flight_data['firstSeen'] = pd.to_datetime(df_flight_data['firstSeen'], unit='s', errors='coerce')  # Assuming seconds
        df_flight_data['lastSeen'] = pd.to_datetime(df_flight_data['lastSeen'], unit='s', errors='coerce')  # Assuming seconds
@@ -57,6 +56,9 @@ def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airpo
       
       #hash all columns and store the hash in a new column called hashed - this is they key in the database table
        df_flight_data['hashed'] = pd.util.hash_pandas_object(df_flight_data, index=False).astype(str)
+
+      # adding extracted time after the hash to not be included in the hash key
+       df_flight_data['extractDateTime'] = current_datetime
 
       # add received data to accumulated dataframe.
        accumulated_data = pd.concat([accumulated_data,df_flight_data])
