@@ -2,7 +2,7 @@ import os
 from dec_project_1.connectors.open_sky_api_client import OpenSkyAPIClient
 from dec_project_1.connectors.postgresql import PostgreSqlClient
 from dec_project_1.assets.opensky import  load, extract_max_date, extract_by_direction
-import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pandas as pd
 from sqlalchemy import Table, Column, Integer, String, MetaData, Float, DateTime 
@@ -49,10 +49,9 @@ def main():
         Column("hashed", String, primary_key=True)
     )
     
-    #airport = "EPWA" #"ESSA" # ICAO: Arlanda Stockholm -- IATA names are not used.
     airports = ["EPKK","EPWA"] # EPWA = Warzaw, EPKK = Krakow
-    default_begin_timestamp = datetime.datetime(2023,8,1,0,0, tzinfo=pytz.utc)
-    end_timestamp = datetime.datetime.now(pytz.utc).replace(microsecond = 0)
+    default_begin_timestamp = datetime.now(pytz.utc).replace(microsecond=0) - timedelta(days=30)
+    end_timestamp = datetime.now(pytz.utc).replace(microsecond = 0)
     arrival = "arrival"
     departure = "departure"
 
