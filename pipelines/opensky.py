@@ -119,17 +119,6 @@ def main():
             dwh_engine=dwh_engine
         )    
         
-    
-        #     data = extract(
-        #     sql_template=sql_template,
-        #     source_engine=source_engine,
-        #     target_engine=target_engine
-        # )
-        # source_metadata = get_schema_metadata(engine=source_engine)
-        # load(data=data, table_name=table_name, engine=target_engine, source_metadata=source_metadata)
-    
-    
-    
     # end load to dwh
     
     # start of transform
