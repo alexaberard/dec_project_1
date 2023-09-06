@@ -1,8 +1,8 @@
 import os
-from connectors.open_sky_api_client import OpenSkyAPIClient
-from connectors.postgresql import PostgreSqlClient
-from assets.opensky import  load, extract_max_date, extract_by_direction
-from assets.transform import transform, load_source_table_to_dwh
+from etl.connectors.open_sky_api_client import OpenSkyAPIClient
+from etl.connectors.postgresql import PostgreSqlClient
+from etl.assets.opensky import  load, extract_max_date, extract_by_direction
+from etl.assets.transform import transform, load_source_table_to_dwh
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pandas as pd
@@ -108,7 +108,7 @@ def main():
     dwh_engine = create_engine(dwh_connection_url)
     
     
-    source_file_system_loader = FileSystemLoader("sql/load")
+    source_file_system_loader = FileSystemLoader("etl/sql/load")
     source_environment = Environment(loader=source_file_system_loader)
     
     for sql_load_file in source_environment.list_templates():
@@ -122,10 +122,8 @@ def main():
     # end load to dwh
     
     # start of transform
-    
 
-    
-    transform_file_system_loader = FileSystemLoader("sql/transform")
+    transform_file_system_loader = FileSystemLoader("etl/sql/transform")
     transform_environment = Environment(loader=transform_file_system_loader)
     
     for sql_transform_file in transform_environment.list_templates():
