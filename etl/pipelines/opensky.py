@@ -12,6 +12,8 @@ from jinja2 import Environment, FileSystemLoader, Template
 import pytz
 
 def main():
+    """Main function for triggering whole ETL process
+    """
     load_dotenv()
     username = os.environ.get("USERNAME_API_OPENSKY")
     password = os.environ.get("PASSWORD_API_OPENSKY")
@@ -117,12 +119,10 @@ def main():
             source_environment=source_environment,
             source_engine=source_engine,
             dwh_engine=dwh_engine
-        )    
-        
+        )       
     # end load to dwh
     
     # start of transform
-
     transform_file_system_loader = FileSystemLoader("etl/sql/transform")
     transform_environment = Environment(loader=transform_file_system_loader)
     

@@ -6,14 +6,26 @@ from datetime import datetime, timedelta
 import json
 import pytz
 
-def is_json_compatible(data):
+def is_json_compatible() -> bool:
     try:
         json.dumps(data, cls=json.JSONEncoder)
         return True
     except (TypeError, OverflowError):
         return False
 
-def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airport:str, begin_timestamp: datetime, end_timestamp: datetime):
+def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airport:str, begin_timestamp: datetime, end_timestamp: datetime) -> pd.DataFrame:
+  """Extract data from opensky api for selected range of dates. API is called in smaller chunks of 7 days intervals
+
+  Args:
+      opensky_client (OpenSkyAPIClient): API class
+      direction (str): arrivals/departures
+      airport (str): name of the airport (4 letter abbreviation code)
+      begin_timestamp (datetime): start date
+      end_timestamp (datetime): end date
+
+  Returns:
+      pd.DataFrame: accumulated dataframe
+  """
   print(f"Extracting flightdata for direction: {direction}")
   # create variables with data that is going to be inserted into the df
   flightdata_type = direction
@@ -72,11 +84,18 @@ def extract_by_direction(opensky_client: OpenSkyAPIClient, direction: str, airpo
   return accumulated_data
 
 def load(df: pd.DataFrame, postgresql_client: PostgreSqlClient, table, metadata):
+  """Load data into database
+
+  Args:
+      df (pd.DataFrame): dataset
+      postgresql_client (PostgreSqlClient): postgres class
+      table (_type_): 
+      metadata (_type_): 
+  """
   #postgresql_client.write_to_table(data=df.to_dict(orient="records"), table=table, metadata=metadata)
   postgresql_client.upsert_in_chunks(data=df.to_dict(orient="records"), table=table, metadata=metadata)
 
 def extract_max_date(postgresql_client: PostgreSqlClient, table, default_begin_timestamp):
-
   table_exists = postgresql_client.table_exists(table)
   if table_exists:
 

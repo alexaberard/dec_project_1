@@ -4,7 +4,14 @@ import os
 from sqlalchemy import MetaData, Column, Table
 from sqlalchemy.dialects import postgresql
 
-def transform(engine: Engine, sql_template: Template, table_name: str):
+def transform(engine: Engine, sql_template: Template, table_name: str) -> None:
+    """Helping function for creating dropping / create table from select command
+
+    Args:
+        engine (Engine): desination DWH engine
+        sql_template (Template): select query
+        table_name (str): table name
+    """
     sql_query = f"""
             drop table if exists {table_name};
             create table {table_name} as ({sql_template.render()});
@@ -18,6 +25,15 @@ def load_source_table_to_dwh(
             dwh_engine: Engine,
             chunksize: int = 1000
         ):
+    """Load existing table from staging database into desetination data warehouse
+
+    Args:
+        sql_load_file (str): source select query
+        source_environment (Environment): source env
+        source_engine (Engine): source engine
+        dwh_engine (Engine): destination engine
+        chunksize (int, optional): Size of the chunk during data load. Defaults to 1000.
+    """    
     table_name = os.path.splitext(sql_load_file)[0]
     sql_load_template  = source_environment.get_template(sql_load_file)
     data = [dict(row) for row in source_engine.execute(f"{sql_load_template.render()}").all()]
