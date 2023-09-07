@@ -3,16 +3,32 @@ import datetime
 import sys
 
 class OpenSkyAPIClient:
-    def __init__(self, username, password):
+    def __init__(self, username: str, password: str):
+        """At initialize provide login data to website account
+
+        Args:
+            username (_type_): stored in .env file
+            password (_type_): stored in .env file
+        """        
         self.base_url = "https://opensky-network.org/api/"
         self.username = username
         self.password = password
     
-    def convert_to_unix_timestamp(self, timestamp):
+    def convert_to_unix_timestamp(self, timestamp) -> int:
         return int(timestamp.timestamp())
 
     def get_direction_by_airport(self,direction, airport,begin_timestamp, end_timestamp):
+        """Get arrivalas/departures data directly from the API. Time intervals can not be greater than 7 days.
 
+        Args:
+            direction (_type_): arrival/departure
+            airport (_type_): 4 letter airport code
+            begin_timestamp (_type_): time from 
+            end_timestamp (_type_): time to
+
+        Returns:
+            _type_: List of JSONs
+        """        
         if direction == 'arrival':
             endpoint_url = self.base_url + "flights/arrival"
         elif direction == 'departure':
