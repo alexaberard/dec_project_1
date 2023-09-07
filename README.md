@@ -3,10 +3,14 @@
 ## OpenSky Network API
 
 
+![opensky_title](/doc/imgs/opensky_title.JPG)
+
 
 This project consisting of implementation ETL process for getting live airflights data.
 
 “The API lets you retrieve live airspace information for research and non-commerical purposes.”
+
+---
 
 | Author          | GitHub profile |
 | ---           | --- |
@@ -20,16 +24,42 @@ The solutions is done with help of:
 - OpenSky API documentation - https://openskynetwork.github.io/opensky-api/rest.html
 - Resources provided during DEC courses - https://dataengineercamp.com/
 
+
+### API Limitations
+
+Limitations 
+30 days of data.
+Only 7 days of data per call.
+
+
 ---
-### ETL
+### Business Questions
+Objective was to extract flight data to answer these questions
+- Average amount of flights by months.
+- Flight time delay - estimated time vs arrival time
+- Flight time statistics - max, min, spread within routes
+- Route statistics - how often they are used
+- Time intervals between preceeding flights on same route
+
+---
+### Architecture
 ![etl_graph](/doc/imgs/ETL_diagram.JPG)
 ---
-#### Extract
+#### Extraction
+
+- Two airports: Krakow and Warsaw
+- If  database is empty set first date to current date - 30 days
+	- else: set first date to latest extraction date - select max(extractionDate) from flightdata
+- Create a loop to extract 7 days per call
+	- Loop and extract
+- Remember that timestamps are stored in UTC
+
 
 
 ---
 #### Transform
-Transormation is 
+
+Sample sql query from `etl/sql/transform/`
 
 ``` sql
 select f.*, 
@@ -44,6 +74,8 @@ from (
 		and f."estArrivalAirport" is not null
 ) f
 ```
+
+Output tables as precalculated reports from SQL jinja templates.
 
 ![output_tables](/doc/imgs/output_tables.JPG)
 ---
@@ -77,3 +109,6 @@ Output:
 
 
 ![sample_etl_run](/doc/imgs/sample_etl_run.JPG)
+
+
+
